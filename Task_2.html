@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Custom Build Form</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Custom Build Form</h1>
+
+    <button onclick="addField('text')">Add Text Field</button>
+    <button onclick="addField('select')">Add Select Field</button>
+
+    <form id="customForm">
+      <div id="formFields">
+        <!-- Fields will be dynamically added here -->
+      </div>
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+
+    <br />
+    <h2>Submitted Data</h2>
+    <table id="dataTable">
+      <!-- Submitted data will be displayed here -->
+    </table>
+
+    <script>
+      // Function to add a new field to the form
+      function addField(type) {
+        const formFields = document.getElementById("formFields");
+
+        // Create a new field based on the specified type
+        const newField = document.createElement("div");
+        newField.classList.add("field");
+        if (type === "text") {
+          newField.innerHTML = `
+          <label for="textField">Text Field:</label>
+          <input type="text" name="textField" required>
+          <button onclick="removeField(this.parentNode)">Remove</button>
+        `;
+        } else if (type === "select") {
+          newField.innerHTML = `
+          <label for="selectField">Select Field:</label>
+          <select name="selectField" required>
+            <option value=""></option>
+            <option value="Option 1">Option 1</option>
+            <option value="Option 2">Option 2</option>
+            <option value="Option 3">Option 3</option>
+          </select>
+          <button onclick="removeField(this.parentNode)">Remove</button>
+        `;
+        }
+
+        // Append the new field to the form
+        formFields.appendChild(newField);
+      }
+
+      // Function to remove a field from the form
+      function removeField(field) {
+        field.parentNode.removeChild(field);
+      }
+
+      // Function to handle form submission
+      document
+        .getElementById("customForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent form submission
+
+          const formData = new FormData(this);
+          const table = document.getElementById("dataTable");
+
+          // Create table headers
+          if (table.getElementsByTagName("thead").length === 0) {
+            const headerRow = table.createTHead().insertRow(0);
+            for (let [fieldName] of formData) {
+              const headerCell = headerRow.insertCell();
+              headerCell.textContent = fieldName;
+            }
+          }
+
+          // Create table row with form data
+          const dataRow = table.insertRow();
+          for (let [, fieldValue] of formData) {
+            const dataCell = dataRow.insertCell();
+            dataCell.textContent = fieldValue;
+          }
+
+          // Reset the form
+          this.reset();
+        });
+    </script>
+  </body>
+</html>
